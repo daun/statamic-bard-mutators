@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Bard\Mutators;
+namespace Daun\BardMutators;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

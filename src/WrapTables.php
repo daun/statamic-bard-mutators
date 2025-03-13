@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Bard\Mutators;
+namespace Daun\BardMutators;
 
 use JackSleight\StatamicBardMutator\Plugins\Plugin;
 
