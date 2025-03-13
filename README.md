@@ -14,18 +14,16 @@ composer require daun/statamic-bard-mutators
 
 ## Registration
 
-Register any mutators you want to use in your app's service provider. Options can be passed
-as arguments to the mutator's constructor.
+Register any mutators you want to use from the `Mutator` facade. Options can be passed as arguments
+to the constructor. You can read more about
+[class-based mutator plugins](https://jacksleight.dev/docs/bard-mutator/plugins#class-based-plugins)
+in the addon readme.
 
 ```php
-class AppServiceProvider extends ServiceProvider
-{
-    public function boot(): void
-    {
-        new \Daun\BardMutators\MarkExternalLinks();
-        new \Daun\BardMutators\GenerateHeadingIds(levels: [2, 3]);
-    }
-}
+use JackSleight\StatamicBardMutator\Facades\Mutator;
+use Daun\BardMutators\MarkExternalLinks;
+
+Mutator::plugin(new MarkExternalLinks());
 ```
 
 ## Mutators
@@ -117,10 +115,10 @@ Wraps tables in a `div` element to allow for horizontal scrolling on smaller scr
 ```
 
 ```php
-new \Daun\BardMutators\WrapTables();
+new WrapTables();
 
 // Optionally use a custom tag or add a class to the wrapper element
-new \Daun\BardMutators\WrapTables(
+new WrapTables(
     tag: 'section',
     class: 'table'
 );
