@@ -2,8 +2,7 @@
 
 A collection of mutators for transforming [Statamic Bard](https://statamic.dev/fieldtypes/bard) content.
 
-Requires the [Bard Mutator Addon](https://statamic.com/addons/jacksleight/bard-mutator) to be
-installed. All mutators are implemented as plugins for the Bard Mutator addon.
+All mutators are implemented as plugins for the [Bard Mutator Addon](https://statamic.com/addons/jacksleight/bard-mutator).
 
 ## Installation
 
