@@ -8,6 +8,7 @@ use Statamic\Facades\Asset;
 class MarkAssetLinks extends Plugin
 {
     protected array $types = ['link'];
+
     public function render(array $value, object $info, array $params): array
     {
         $url = $value[1]['href'] ?? '';
