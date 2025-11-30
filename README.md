@@ -50,6 +50,22 @@ new MarkExternalLinks(
 );
 ```
 
+### Mark Asset Links
+
+Mark links to assets with `download="filename.ext"`.
+
+```html
+<!-- Before -->
+<a href="/assets/video.mp4">Download video</a>
+
+<!-- After -->
+<a href="/assets/video.mp4" download="video.mp4">Download video</a>
+```
+
+```php
+new MarkAssetLinks();
+```
+
 ### Generate Heading IDs
 
 Adds an `id` attribute to headings based on their content.
