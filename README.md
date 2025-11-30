@@ -124,6 +124,26 @@ new WrapTables(
 );
 ```
 
+## Remove List Item Paragraphs
+
+Remove the paragraphs that tiptap automatically adds inside list items.
+
+```html
+<!-- Before -->
+<li>
+    <p>List item</p>
+</li>
+
+<!-- After -->
+<li>
+    List item
+</li>
+```
+
+```php
+new RemoveListItemParagraphs();
+```
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
