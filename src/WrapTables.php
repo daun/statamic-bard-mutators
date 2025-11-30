@@ -15,9 +15,12 @@ class WrapTables extends Plugin
 
     public function render(array $value, object $info, array $params): array
     {
-        if ($info->parent->type === $this->tag) return $value;
+        if ($info->parent->type === $this->tag) {
+            return $value;
+        }
 
         $inner = array_splice($value, 2, count($value), [0]);
+
         return [$this->tag, ['class' => $this->class], $value, ...$inner];
     }
 }

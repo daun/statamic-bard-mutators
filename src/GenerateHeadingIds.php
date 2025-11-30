@@ -19,6 +19,7 @@ class GenerateHeadingIds extends Plugin
             $content = collect($info->item->content)->implode('text', '');
             $value[1]['id'] ??= Str::slug($content);
         }
+
         return $value;
     }
 }

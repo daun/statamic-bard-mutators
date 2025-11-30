@@ -17,7 +17,9 @@ class MarkExternalLinks extends Plugin
     public function render(array $value, object $info, array $params): array
     {
         $url = $value[1]['href'] ?? '';
-        if (!$url || !URL::isExternal($url)) return $value;
+        if (! $url || ! URL::isExternal($url)) {
+            return $value;
+        }
 
         if ($this->target) {
             $value[1]['target'] = ($value[1]['target'] ?? null) ?: $this->target;

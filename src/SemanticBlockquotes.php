@@ -18,13 +18,17 @@ class SemanticBlockquotes extends Plugin
 
     public function process(object $item, object $info): void
     {
-        if ($info->parent->type === 'figure') return;
+        if ($info->parent->type === 'figure') {
+            return;
+        }
 
         // Read author/source from last paragraph
-        $paragraph = Arr::last($item->content, fn($node) => $node->type === 'paragraph');
-        $source = Arr::last($paragraph->content ?? [], fn($node) => $node->type === 'text' && Str::startsWith($node->text, $this->sourcePrefix));
+        $paragraph = Arr::last($item->content, fn ($node) => $node->type === 'paragraph');
+        $source = Arr::last($paragraph->content ?? [], fn ($node) => $node->type === 'text' && Str::startsWith($node->text, $this->sourcePrefix));
 
-        if (!$source) return;
+        if (! $source) {
+            return;
+        }
 
         // Remove source prefix
         $source->text = Str::ltrim(Str::chopStart($source->text, $this->sourcePrefix));
