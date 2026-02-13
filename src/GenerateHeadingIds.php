@@ -18,7 +18,7 @@ class GenerateHeadingIds extends Plugin
     {
         if (in_array($info->item->attrs->level, $this->levels)) {
             $content = collect($info->item->content)->implode('text', '');
-            $value[1]['id'] ??= $this->prefix . Str::slug($content);
+            $value[1]['id'] ??= $this->prefix.Str::slug($content);
         }
 
         return $value;
