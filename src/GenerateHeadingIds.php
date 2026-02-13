@@ -10,14 +10,15 @@ class GenerateHeadingIds extends Plugin
     protected array $types = ['heading'];
 
     public function __construct(
-        protected array $levels = [1, 2, 3, 4, 5, 6]
+        protected array $levels = [1, 2, 3, 4, 5, 6],
+        protected string $prefix = '',
     ) {}
 
     public function render(array $value, object $info, array $params): array
     {
         if (in_array($info->item->attrs->level, $this->levels)) {
             $content = collect($info->item->content)->implode('text', '');
-            $value[1]['id'] ??= Str::slug($content);
+            $value[1]['id'] ??= $this->prefix . Str::slug($content);
         }
 
         return $value;
