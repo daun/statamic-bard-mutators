@@ -81,8 +81,11 @@ Adds an `id` attribute to headings based on their content.
 ```php
 new GenerateHeadingIds();
 
-// Optionally customize which heading levels to generate IDs for
-new GenerateHeadingIds(levels: [2, 3]);
+// Customize heading levels to generate IDs for and add a prefix to generated IDs
+new GenerateHeadingIds(
+    levels: [2, 3],
+    prefix: 'section-'
+);
 ```
 
 ### Semantic Blockquotes
