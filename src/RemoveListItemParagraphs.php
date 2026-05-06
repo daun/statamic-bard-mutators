@@ -6,14 +6,14 @@ use JackSleight\StatamicBardMutator\Plugins\Plugin;
 
 class RemoveListItemParagraphs extends Plugin
 {
-    protected array $types = ['paragraph'];
+    protected array $types = ['listItem'];
 
-    public function render(array $value, object $info, array $params): ?array
+    public function process(object $item, object $info): void
     {
-        if (($info->parent->type ?? null) === 'listItem') {
-            return null;
-        }
+        $content = $item->content ?? [];
 
-        return $value;
+        if (count($content) === 1 && $content[0]->type === 'paragraph') {
+            $item->content = $content[0]->content;
+        }
     }
 }
