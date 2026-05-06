@@ -22,21 +22,40 @@ class SemanticBlockquotes extends Plugin
             return;
         }
 
-        // Read author/source from last paragraph
-        $paragraph = Arr::last($item->content, fn ($node) => $node->type === 'paragraph');
-        $source = Arr::last($paragraph->content ?? [], fn ($node) => $node->type === 'text' && Str::startsWith($node->text, $this->sourcePrefix));
+        [$content, $source] = $this->extractSource($item);
 
-        if (! $source) {
-            return;
+        if (count($source)) {
+            Data::morph($item, Data::html('figure', ['class' => $this->class], [
+                Data::clone($item, content: $content),
+                Data::html('figcaption', content: $source),
+            ]));
+        } else {
+            Data::morph($item, Data::html('figure', ['class' => $this->class], [
+                Data::clone($item),
+            ]));
+        }
+    }
+
+    /**
+     * Read author/source from last paragraph
+     */
+    protected function extractSource(object $item): array
+    {
+        $sourceParagraph = Arr::last($item->content);
+        if ($sourceParagraph?->type !== 'paragraph') {
+            return [$item->content, []];
         }
 
-        // Remove source prefix
+        $source = Arr::first($sourceParagraph->content ?? []);
+        if ($source?->type !== 'text' || ! Str::startsWith($source->text, $this->sourcePrefix)) {
+            return [$item->content, []];
+        }
+
         $source->text = Str::ltrim(Str::chopStart($source->text, $this->sourcePrefix));
 
-        // Turn into figure + figcaption
-        Data::morph($item, Data::html('figure', ['class' => $this->class], [
-            Data::clone($item, content: collect($item->content)->filter(fn ($node) => $node !== $paragraph)->values()->all()),
-            Data::html('figcaption', [], [$source]),
-        ]));
+        return [
+            collect($item->content)->filter(fn ($node) => $node !== $sourceParagraph)->values()->all(),
+            $sourceParagraph->content,
+        ];
     }
 }
