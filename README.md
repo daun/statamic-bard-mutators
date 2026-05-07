@@ -2,7 +2,16 @@
 
 A collection of mutators for transforming [Statamic Bard](https://statamic.dev/fieldtypes/bard) content.
 
-All mutators are implemented as plugins for the [Bard Mutator Addon](https://statamic.com/addons/jacksleight/bard-mutator).
+Mutators are implemented as plugins for Jack Sleight's [Bard Mutator Addon](https://statamic.com/addons/jacksleight/bard-mutator).
+
+## Mutators
+
+- [Generate Heading IDs](#generate-heading-ids) — add `id` to headings
+- [Insert Heading Anchors](#insert-heading-anchors) — insert anchor links into headings
+- [Normalize Heading Levels](#normalize-heading-levels) — close gaps in the heading hierarchy
+- [Shift Heading Levels](#shift-heading-levels) — shift or clamp heading levels
+
+[See the full list of mutators →](#all-mutators)
 
 ## Installation
 
@@ -26,7 +35,7 @@ use Daun\BardMutators\MarkExternalLinks;
 Mutator::plugin(new MarkExternalLinks());
 ```
 
-## Mutators
+## All Mutators
 
 ### Mark External Links
 
@@ -94,6 +103,51 @@ new GenerateHeadingIds(
 );
 ```
 
+### Insert Heading Anchors
+
+Insert an anchor link inside each heading pointing to its own `id`. Anchors are
+only added to headings that already have an `id` — register `GenerateHeadingIds`
+beforehand if you want every heading to be anchored.
+
+```html
+<!-- Before -->
+<h2 id="introduction">Introduction</h2>
+
+<!-- After -->
+<h2 id="introduction">
+    <a href="#introduction" aria-label="Permalink to Introduction">
+        <span aria-hidden="true">#</span>
+    </a>
+    Introduction
+</h2>
+```
+
+The icon is wrapped in `<span aria-hidden="true">` so a screen reader announces
+only the link's `aria-label`, not the icon.
+
+```php
+// Register GenerateHeadingIds first so headings get an id to anchor to.
+Mutator::plugin(new GenerateHeadingIds());
+Mutator::plugin(new InsertHeadingAnchors());
+
+// Append the anchor instead of prepending it.
+new InsertHeadingAnchors(behavior: 'append');
+
+// Customize the icon (text, emoji, or raw HTML for an inline SVG).
+new InsertHeadingAnchors(icon: '🔗');
+new InsertHeadingAnchors(icon: '<svg viewBox="0 0 16 16"><path d="…"/></svg>');
+
+// Customize the accessible label. Use `{text}` as a placeholder for the
+// resolved heading text.
+new InsertHeadingAnchors(label: 'Jump to {text}');
+
+// Limit which heading levels are anchored, add a class.
+new InsertHeadingAnchors(
+    levels: [2, 3],
+    class: 'heading-anchor',
+);
+```
+
 ### Semantic Blockquotes
 
 Wraps blockquotes in a `figure` element and moves the author/source into a `figcaption` element.
@@ -147,6 +201,61 @@ new WrapTables(
     tag: 'section',
     class: 'table'
 );
+```
+
+### Normalize Heading Levels
+
+Close skip-level gaps in the heading hierarchy by pulling deep headings up
+(e.g. `<h2>` followed by `<h4>` becomes `<h2>` followed by `<h3>`). The first
+heading is left at whatever level it starts, and going back up to a shallower
+level is always allowed.
+
+```html
+<!-- Before -->
+<h2>Section</h2>
+<h4>Subsection</h4>
+
+<!-- After -->
+<h2>Section</h2>
+<h3>Subsection</h3>
+```
+
+```php
+new NormalizeHeadingLevels();
+```
+
+This pairs naturally with `ShiftHeadingLevels` — register `NormalizeHeadingLevels`
+first to clean the hierarchy, then `ShiftHeadingLevels` to position the cleaned
+tree (e.g. `min: 2` to keep `<h1>` reserved for the page title).
+
+### Shift Heading Levels
+
+Shift heading levels up or down. Useful when a Bard field is rendered under a page
+`<h1>` and headings inside the field should start lower in the outline.
+
+```html
+<!-- Before -->
+<h1>Section</h1>
+<h2>Subsection</h2>
+
+<!-- After: shift: 1 -->
+<h2>Section</h2>
+<h3>Subsection</h3>
+```
+
+```php
+// Shift every heading down (or up, with negative values). Clamped to h6.
+new ShiftHeadingLevels(shift: 1);
+
+// Clamp every heading to be at least h2 (e.g. to keep h1 reserved for the page title).
+new ShiftHeadingLevels(min: 2);
+
+// Shift the entire document so its shallowest heading becomes h2,
+// preserving relative hierarchy. Mutually exclusive with `shift`.
+new ShiftHeadingLevels(start: 2);
+
+// Combine: shift down, then clamp at h2.
+new ShiftHeadingLevels(shift: 1, min: 2);
 ```
 
 ## Remove List Item Paragraphs
