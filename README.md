@@ -64,6 +64,11 @@ Mark links to assets with `download="filename.ext"`.
 
 ```php
 new MarkAssetLinks();
+
+// Use original filename as download filename hint
+new MarkAssetLinks(
+    useOriginalFilename: true
+);
 ```
 
 ### Generate Heading IDs
