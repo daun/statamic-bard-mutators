@@ -6,6 +6,7 @@ Mutators are implemented as plugins for Jack Sleight's [Bard Mutator Addon](http
 
 ## Mutators
 
+- [Lazy Load Images](#lazy-load-images) — add `loading=lazy` and `decoding=async` to images
 - [Generate Heading IDs](#generate-heading-ids) — add `id` to headings
 - [Insert Heading Anchors](#insert-heading-anchors) — insert anchor links into headings
 - [Normalize Heading Levels](#normalize-heading-levels) — close gaps in the heading hierarchy
@@ -256,6 +257,44 @@ new ShiftHeadingLevels(start: 2);
 
 // Combine: shift down, then clamp at h2.
 new ShiftHeadingLevels(shift: 1, min: 2);
+```
+
+### Lazy Load Images
+
+Add `loading="lazy"` and `decoding="async"` to images for better page performance.
+
+```html
+<!-- Before -->
+<img src="photo.jpg" alt="A photo">
+
+<!-- After -->
+<img src="photo.jpg" alt="A photo" loading="lazy" decoding="async">
+```
+
+```php
+new LazyLoadImages();
+
+// Skip lazy loading on the first image if it sits at the top of the document
+// (i.e. is the first node, or appears in the first paragraph or figure).
+// Useful for avoiding lazy loading on a likely LCP image.
+new LazyLoadImages(
+    skipFirst: true
+);
+
+// Switch to lazysizes.js markup. The image gets a `lazyload` class, its `src`
+// is moved to `data-src`, and the native `loading`/`decoding` attributes are
+// not added. Pass an optional class name to override `lazyload`.
+(new LazyLoadImages())->usingLazysizes();
+(new LazyLoadImages())->usingLazysizes('lazy-load');
+
+// Combine with skipFirst: the LCP image is left untouched (no lazyload class,
+// no data-src swap) so the browser loads it eagerly.
+(new LazyLoadImages(skipFirst: true))->usingLazysizes();
+```
+
+```html
+<!-- After: usingLazysizes() -->
+<img class="lazyload" data-src="photo.jpg" alt="A photo">
 ```
 
 ## Remove List Item Paragraphs
