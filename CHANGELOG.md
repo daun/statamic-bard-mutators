@@ -2,12 +2,18 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.4.0] - 2026-05-07
+
+- Use original filename as download hint
+- Ignore empty headings when generating ids
+- Extend test suite
+
 ## [1.3.1] - 2026-05-06
 
 - Keep list item paragraph if it has siblings
 - Wrap blockquote in figure even if no source is found
 - Remove `laravel/framework` from direct dependencies
-- Add unit tests
+- Add test suite
 
 ## [1.3.0] - 2026-02-13
 
@@ -34,6 +40,7 @@ All notable changes to this package will be documented in this file.
 
 - Initial release
 
+[1.4.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.4.0
 [1.3.1]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.3.1
 [1.3.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.3.0
 [1.2.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.2.0
