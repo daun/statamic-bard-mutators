@@ -66,6 +66,7 @@ Mark links to assets with `download="filename.ext"`.
 new MarkAssetLinks();
 
 // Use original filename as download filename hint
+// Requires `daun/statamic-original-filename` package
 new MarkAssetLinks(
     useOriginalFilename: true
 );
