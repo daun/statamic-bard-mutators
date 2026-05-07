@@ -11,6 +11,11 @@ Mutators are implemented as plugins for Jack Sleight's [Bard Mutator Addon](http
 - [Insert Heading Anchors](#insert-heading-anchors) — insert anchor links into headings
 - [Normalize Heading Levels](#normalize-heading-levels) — close gaps in the heading hierarchy
 - [Shift Heading Levels](#shift-heading-levels) — shift or clamp heading levels
+- [Mark External Links](#mark-external-links) — add `target` and `rel` to external links
+- [Mark Asset Links](#mark-asset-links) — add `download` to asset links
+- [Semantic Blockquotes](#semantic-blockquotes) — wrap blockquotes in `figure` with `figcaption`
+- [Wrap Tables](#wrap-tables) — move tables into a horizontally scrollable container
+- [Remove List Item Paragraphs](#remove-list-item-paragraphs) — remove `p` wrappers around `li` text
 
 [See the full list of mutators →](#all-mutators)
 
