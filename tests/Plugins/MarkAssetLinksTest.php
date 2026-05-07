@@ -2,7 +2,7 @@
 
 use Daun\BardMutators\MarkAssetLinks;
 use JackSleight\StatamicBardMutator\Facades\Mutator;
-use Statamic\Contracts\Assets\Asset as AssetContract;
+use Statamic\Assets\Asset as AssetClass;
 use Statamic\Facades\Asset;
 use Tests\TestCase;
 
@@ -23,10 +23,12 @@ function assetLinkValue($href)
     ]]);
 }
 
-function fakeAsset(string $basename): AssetContract
+function fakeAsset(string $basename, array $meta = []): AssetClass
 {
-    $asset = Mockery::mock(AssetContract::class);
+    $asset = Mockery::mock(AssetClass::class);
     $asset->shouldReceive('basename')->andReturn($basename);
+    $asset->shouldReceive('extension')->andReturn(pathinfo($basename, PATHINFO_EXTENSION));
+    $asset->shouldReceive('get')->andReturnUsing(fn ($key, $fallback = null) => $meta[$key] ?? $fallback);
 
     return $asset;
 }
@@ -81,6 +83,34 @@ it('does not modify links that do not match an asset', function () {
     Mutator::plugin(MarkAssetLinks::class);
 
     expect($this->renderTestValue($value))->toEqual('<p><a href="/about">download</a></p>');
+});
+
+it('uses the original filename as the download name when configured', function () {
+    Asset::shouldReceive('findByUrl')
+        ->with('/files/my-file.pdf')
+        ->andReturn(fakeAsset('my-file.pdf', ['original_filename' => 'My File']));
+
+    $value = assetLinkValue('/files/my-file.pdf');
+
+    Mutator::plugin(new MarkAssetLinks(useOriginalFilename: true));
+
+    expect($this->renderTestValue($value))->toEqual(
+        '<p><a href="/files/my-file.pdf" download="My File.pdf">download</a></p>'
+    );
+});
+
+it('falls back to the basename when no original filename is stored', function () {
+    Asset::shouldReceive('findByUrl')
+        ->with('/files/no-meta.pdf')
+        ->andReturn(fakeAsset('no-meta.pdf'));
+
+    $value = assetLinkValue('/files/no-meta.pdf');
+
+    Mutator::plugin(new MarkAssetLinks(useOriginalFilename: true));
+
+    expect($this->renderTestValue($value))->toEqual(
+        '<p><a href="/files/no-meta.pdf" download="no-meta.pdf">download</a></p>'
+    );
 });
 
 it('does not modify links with an empty href', function () {
