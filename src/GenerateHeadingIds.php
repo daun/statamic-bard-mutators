@@ -14,12 +14,23 @@ class GenerateHeadingIds extends Plugin
         protected string $prefix = '',
     ) {}
 
+    public function process(object $item, object $info): void
+    {
+        if (! in_array($item->attrs->level ?? null, $this->levels, true)) {
+            return;
+        }
+        if (! empty($item->attrs->id ?? null)) {
+            return;
+        }
+        if ($slug = Str::slug($this->extractText($item->content ?? []))) {
+            $item->attrs->id = $this->prefix.$slug;
+        }
+    }
+
     public function render(array $value, object $info, array $params): array
     {
-        if (in_array($info->item->attrs->level, $this->levels)) {
-            if ($slug = Str::slug($this->extractText($info->item->content ?? []))) {
-                $value[1]['id'] ??= $this->prefix.$slug;
-            }
+        if ($id = $info->item->attrs->id ?? null) {
+            $value[1]['id'] ??= $id;
         }
 
         return $value;
