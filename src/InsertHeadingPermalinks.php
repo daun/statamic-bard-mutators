@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use JackSleight\StatamicBardMutator\Plugins\Plugin;
 use JackSleight\StatamicBardMutator\Support\Data;
 
-class InsertHeadingAnchors extends Plugin
+class InsertHeadingPermalinks extends Plugin
 {
     protected array $types = ['heading'];
 
@@ -33,7 +33,7 @@ class InsertHeadingAnchors extends Plugin
             return;
         }
 
-        if ($this->hasAnchor($item)) {
+        if ($this->hasPermalink($item)) {
             return;
         }
 
@@ -42,21 +42,21 @@ class InsertHeadingAnchors extends Plugin
             return;
         }
 
-        $anchor = $this->buildAnchor($id, $text);
+        $permalink = $this->buildPermalink($id, $text);
         $content = $item->content ?? [];
 
         Data::apply($item, content: $this->behavior === 'prepend'
-            ? [$anchor, ...$content]
-            : [...$content, $anchor]);
+            ? [$permalink, ...$content]
+            : [...$content, $permalink]);
     }
 
-    protected function buildAnchor(string $id, string $text): object
+    protected function buildPermalink(string $id, string $text): object
     {
         $attrs = ['href' => '#'.$id, 'aria-label' => $this->resolveLabel($text)];
         if ($this->class !== null) {
             $attrs['class'] = $this->class;
         }
-        $attrs['data-bmu-anchor'] = '';
+        $attrs['data-bmu-permalink'] = '';
 
         return Data::html('a', $attrs, [
             Data::html('<span aria-hidden="true">'.$this->icon.'</span>'),
@@ -68,11 +68,11 @@ class InsertHeadingAnchors extends Plugin
         return str_replace('{text}', $text, $this->label);
     }
 
-    protected function hasAnchor(object $item): bool
+    protected function hasPermalink(object $item): bool
     {
         foreach ($item->content ?? [] as $child) {
             if (($child->type ?? null) === 'bmuHtml'
-                && isset($child->render[1]['data-bmu-anchor'])) {
+                && isset($child->render[1]['data-bmu-permalink'])) {
                 return true;
             }
         }

@@ -1,13 +1,13 @@
 <?php
 
 use Daun\BardMutators\GenerateHeadingIds;
-use Daun\BardMutators\InsertHeadingAnchors;
+use Daun\BardMutators\InsertHeadingPermalinks;
 use JackSleight\StatamicBardMutator\Facades\Mutator;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
-function anchorHeading(int $level, array $content, ?string $id = null): array
+function permalinkHeading(int $level, array $content, ?string $id = null): array
 {
     $attrs = ['level' => $level];
     if ($id !== null) {
@@ -17,16 +17,16 @@ function anchorHeading(int $level, array $content, ?string $id = null): array
     return ['type' => 'heading', 'attrs' => $attrs, 'content' => $content];
 }
 
-function anchorText(string $text): array
+function permalinkText(string $text): array
 {
     return ['type' => 'text', 'text' => $text];
 }
 
-it('prepends an anchor link inside the heading by default', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Introduction')])]);
+it('prepends a permalink inside the heading by default', function () {
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Introduction')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(InsertHeadingAnchors::class);
+    Mutator::plugin(InsertHeadingPermalinks::class);
 
     $html = $this->renderTestValue($value);
     expect($html)->toEqual(
@@ -34,11 +34,11 @@ it('prepends an anchor link inside the heading by default', function () {
     );
 });
 
-it('appends the anchor link when behavior is append', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Introduction')])]);
+it('appends the permalink when behavior is append', function () {
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Introduction')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(behavior: 'append'));
+    Mutator::plugin(new InsertHeadingPermalinks(behavior: 'append'));
 
     expect($this->renderTestValue($value))->toEqual(
         '<h2 id="introduction">Introduction<a href="#introduction" aria-label="Permalink to Introduction"><span aria-hidden="true">#</span></a></h2>'
@@ -46,26 +46,26 @@ it('appends the anchor link when behavior is append', function () {
 });
 
 it('uses an existing id when present on the heading', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Hello')], id: 'custom')]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Hello')], id: 'custom')]);
 
-    Mutator::plugin(InsertHeadingAnchors::class);
+    Mutator::plugin(InsertHeadingPermalinks::class);
 
     expect($this->renderTestValue($value))->toContain('href="#custom"');
 });
 
 it('skips headings that have no id', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Introduction')])]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Introduction')])]);
 
-    Mutator::plugin(InsertHeadingAnchors::class);
+    Mutator::plugin(InsertHeadingPermalinks::class);
 
     expect($this->renderTestValue($value))->toEqual('<h2>Introduction</h2>');
 });
 
 it('honors a prefix configured on GenerateHeadingIds', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Section One')])]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Section One')])]);
 
     Mutator::plugin(new GenerateHeadingIds(prefix: 'sec-'));
-    Mutator::plugin(new InsertHeadingAnchors);
+    Mutator::plugin(new InsertHeadingPermalinks);
 
     $html = $this->renderTestValue($value);
     expect($html)->toContain('id="sec-section-one"');
@@ -73,23 +73,23 @@ it('honors a prefix configured on GenerateHeadingIds', function () {
 });
 
 it('substitutes the heading text into the label template', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Hello World')])]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Hello World')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(label: 'Anchor: {text}'));
+    Mutator::plugin(new InsertHeadingPermalinks(label: 'Anchor: {text}'));
 
     expect($this->renderTestValue($value))->toContain('aria-label="Anchor: Hello World"');
 });
 
 it('extracts text across inline marks and nested nodes', function () {
-    $value = $this->getTestValue([anchorHeading(2, [
+    $value = $this->getTestValue([permalinkHeading(2, [
         ['type' => 'text', 'text' => 'Hello '],
         ['type' => 'text', 'marks' => [['type' => 'bold']], 'text' => 'bold'],
         ['type' => 'text', 'text' => ' world'],
     ])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(InsertHeadingAnchors::class);
+    Mutator::plugin(InsertHeadingPermalinks::class);
 
     $html = $this->renderTestValue($value);
     expect($html)->toContain('href="#hello-bold-world"');
@@ -99,10 +99,10 @@ it('extracts text across inline marks and nested nodes', function () {
 
 it('renders raw HTML content like an SVG icon', function () {
     $svg = '<svg viewBox="0 0 16 16"><path d="M0 0"/></svg>';
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Heading')])]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Heading')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(icon: $svg));
+    Mutator::plugin(new InsertHeadingPermalinks(icon: $svg));
 
     expect($this->renderTestValue($value))->toContain(
         '<span aria-hidden="true">'.$svg.'</span>'
@@ -110,31 +110,31 @@ it('renders raw HTML content like an SVG icon', function () {
 });
 
 it('renders an emoji as the icon', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Heading')])]);
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Heading')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(icon: '🔗'));
+    Mutator::plugin(new InsertHeadingPermalinks(icon: '🔗'));
 
     expect($this->renderTestValue($value))->toContain('<span aria-hidden="true">🔗</span>');
 });
 
-it('adds a custom class to the anchor', function () {
-    $value = $this->getTestValue([anchorHeading(2, [anchorText('Heading')])]);
+it('adds a custom class to the permalink', function () {
+    $value = $this->getTestValue([permalinkHeading(2, [permalinkText('Heading')])]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(class: 'heading-anchor'));
+    Mutator::plugin(new InsertHeadingPermalinks(class: 'heading-permalink'));
 
-    expect($this->renderTestValue($value))->toContain('class="heading-anchor"');
+    expect($this->renderTestValue($value))->toContain('class="heading-permalink"');
 });
 
 it('skips heading levels not in the configured list', function () {
     $value = $this->getTestValue([
-        anchorHeading(1, [anchorText('One')]),
-        anchorHeading(2, [anchorText('Two')]),
+        permalinkHeading(1, [permalinkText('One')]),
+        permalinkHeading(2, [permalinkText('Two')]),
     ]);
 
     Mutator::plugin(GenerateHeadingIds::class);
-    Mutator::plugin(new InsertHeadingAnchors(levels: [2, 3]));
+    Mutator::plugin(new InsertHeadingPermalinks(levels: [2, 3]));
 
     $html = $this->renderTestValue($value);
     expect($html)->toEqual(
@@ -143,6 +143,6 @@ it('skips heading levels not in the configured list', function () {
 });
 
 it('rejects an invalid behavior value', function () {
-    expect(fn () => new InsertHeadingAnchors(behavior: 'wrap'))
+    expect(fn () => new InsertHeadingPermalinks(behavior: 'wrap'))
         ->toThrow(InvalidArgumentException::class);
 });

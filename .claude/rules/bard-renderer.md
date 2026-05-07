@@ -18,7 +18,7 @@ Tiptap's `Heading` node declares only the `level` attribute. Setting `$item->att
 
 ## Empty-string attribute values are dropped at render
 
-The renderer filters out attribute values that are empty strings (and null). This means tree-level marker attrs like `data-bmu-anchor=""` survive in the parsed node tree (good for re-entry guards) but disappear from rendered HTML.
+The renderer filters out attribute values that are empty strings (and null). This means tree-level marker attrs like `data-bmu-permalink=""` survive in the parsed node tree (good for re-entry guards) but disappear from rendered HTML.
 
 Consequence: never assert the presence of an empty-string marker in render-output tests. Use it for tree inspection only.
 

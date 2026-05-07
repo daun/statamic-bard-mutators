@@ -29,4 +29,4 @@ The architecture section in `CLAUDE.md` covers the basic process-vs-render decis
 
 If two plugins must agree on the same config value (a slug prefix, an id format, etc.) to interoperate, that's a smell. Don't duplicate the option across both APIs. Instead, surface the canonical form on the node tree by having the producing plugin set it in `process`, and have the consuming plugin read from there.
 
-Example: `GenerateHeadingIds` sets `$item->attrs->id` in `process`. `InsertHeadingAnchors` reads `$item->attrs->id` and skips headings without one. Neither plugin needs to know about the other's `prefix` config.
+Example: `GenerateHeadingIds` sets `$item->attrs->id` in `process`. `InsertHeadingPermalinks` reads `$item->attrs->id` and skips headings without one. Neither plugin needs to know about the other's `prefix` config.

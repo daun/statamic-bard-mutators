@@ -21,11 +21,11 @@ For attribute-presence checks where order doesn't matter, prefer `toContain`.
 
 ## Empty-string attrs aren't visible in rendered HTML
 
-If a plugin sets a marker attr like `data-bmu-anchor=""` for tree-level re-entry detection, it won't appear in the rendered output. Don't assert it. Test the actual user-visible behavior instead.
+If a plugin sets a marker attr like `data-bmu-permalink=""` for tree-level re-entry detection, it won't appear in the rendered output. Don't assert it. Test the actual user-visible behavior instead.
 
 ## Plugin registration order matters
 
-Process-hook plugins run in the order they were registered with `Mutator::plugin()`. When a plugin depends on attrs set by another (e.g. `InsertHeadingAnchors` reads `attrs->id` set by `GenerateHeadingIds`), register the producer first in your test setup — same as in app code.
+Process-hook plugins run in the order they were registered with `Mutator::plugin()`. When a plugin depends on attrs set by another (e.g. `InsertHeadingPermalinks` reads `attrs->id` set by `GenerateHeadingIds`), register the producer first in your test setup — same as in app code.
 
 ## Helper convention
 

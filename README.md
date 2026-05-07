@@ -8,7 +8,7 @@ Mutators are implemented as plugins for Jack Sleight's [Bard Mutator Addon](http
 
 - [Lazy Load Images](#lazy-load-images) — add `loading=lazy` and `decoding=async` to images
 - [Generate Heading IDs](#generate-heading-ids) — add `id` to headings
-- [Insert Heading Anchors](#insert-heading-anchors) — insert anchor links into headings
+- [Insert Heading Permalinks](#insert-heading-permalinks) — insert permalinks into headings
 - [Normalize Heading Levels](#normalize-heading-levels) — close gaps in the heading hierarchy
 - [Shift Heading Levels](#shift-heading-levels) — shift or clamp heading levels
 - [Mark External Links](#mark-external-links) — add `target` and `rel` to external links
@@ -109,11 +109,11 @@ new GenerateHeadingIds(
 );
 ```
 
-### Insert Heading Anchors
+### Insert Heading Permalinks
 
-Insert an anchor link inside each heading pointing to its own `id`. Anchors are
+Insert a permalink inside each heading pointing to its own `id`. Permalinks are
 only added to headings that already have an `id` — register `GenerateHeadingIds`
-beforehand if you want every heading to be anchored.
+beforehand if you want every heading to get a permalink.
 
 ```html
 <!-- Before -->
@@ -132,25 +132,25 @@ The icon is wrapped in `<span aria-hidden="true">` so a screen reader announces
 only the link's `aria-label`, not the icon.
 
 ```php
-// Register GenerateHeadingIds first so headings get an id to anchor to.
+// Register GenerateHeadingIds first so headings get an id to link to.
 Mutator::plugin(new GenerateHeadingIds());
-Mutator::plugin(new InsertHeadingAnchors());
+Mutator::plugin(new InsertHeadingPermalinks());
 
-// Append the anchor instead of prepending it.
-new InsertHeadingAnchors(behavior: 'append');
+// Append the permalink instead of prepending it.
+new InsertHeadingPermalinks(behavior: 'append');
 
 // Customize the icon (text, emoji, or raw HTML for an inline SVG).
-new InsertHeadingAnchors(icon: '🔗');
-new InsertHeadingAnchors(icon: '<svg viewBox="0 0 16 16"><path d="…"/></svg>');
+new InsertHeadingPermalinks(icon: '🔗');
+new InsertHeadingPermalinks(icon: '<svg viewBox="0 0 16 16"><path d="…"/></svg>');
 
 // Customize the accessible label. Use `{text}` as a placeholder for the
 // resolved heading text.
-new InsertHeadingAnchors(label: 'Jump to {text}');
+new InsertHeadingPermalinks(label: 'Jump to {text}');
 
-// Limit which heading levels are anchored, add a class.
-new InsertHeadingAnchors(
+// Limit which heading levels get a permalink, add a class.
+new InsertHeadingPermalinks(
     levels: [2, 3],
-    class: 'heading-anchor',
+    class: 'heading-permalink',
 );
 ```
 
