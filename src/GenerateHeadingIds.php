@@ -17,10 +17,25 @@ class GenerateHeadingIds extends Plugin
     public function render(array $value, object $info, array $params): array
     {
         if (in_array($info->item->attrs->level, $this->levels)) {
-            $content = collect($info->item->content)->implode('text', '');
-            $value[1]['id'] ??= $this->prefix.Str::slug($content);
+            if ($slug = Str::slug($this->extractText($info->item->content ?? []))) {
+                $value[1]['id'] ??= $this->prefix.$slug;
+            }
         }
 
         return $value;
+    }
+
+    protected function extractText(iterable $content): string
+    {
+        return collect($content)->reduce(function (string $carry, object $node) {
+            if (isset($node->text)) {
+                return $carry.$node->text;
+            }
+            if (isset($node->content)) {
+                return $carry.$this->extractText($node->content);
+            }
+
+            return $carry;
+        }, '');
     }
 }
