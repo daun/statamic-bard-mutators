@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.5.0] - 2026-05-07
+
+- Add mutator: Lazy Load Images
+- Add mutator: Insert Heading Anchors
+- Add mutator: Normalize Heading Levels
+- Add mutator: Shift Heading Levels
+
 ## [1.4.0] - 2026-05-07
 
 - Use original filename as download hint
@@ -40,6 +47,7 @@ All notable changes to this package will be documented in this file.
 
 - Initial release
 
+[1.5.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.5.0
 [1.4.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.4.0
 [1.3.1]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.3.1
 [1.3.0]: https://github.com/daun/statamic-bard-mutators/releases/tag/1.3.0
